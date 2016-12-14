@@ -3,6 +3,7 @@
 # Author: leaf@anardil.net
 # colors.sh
 
+killall -s INT colors.sh
 source colors.list
 
 shutdown() {
@@ -60,8 +61,25 @@ do_pulse_random() {
   '
   while true; do
 
+    echo stop > sequence
+
     if test "$1" == "" || test "$1" == "basic"; then
-      a=$(lbrandom3); b=$(lbrandom3); c=$(lbrandom3); d=$(lbrandom3)
+      a=$(lbrandom3) 
+
+      b=$(lbrandom3)
+      while test "$b" = "$a"; do 
+        b=$(lbrandom3) 
+      done
+
+      c=$(lbrandom3)
+      while (test "$c" = "$b" || test "$c" = "$a"); do 
+        c=$(lbrandom3)
+      done
+
+      d=$(lbrandom3)
+      while (test "$d" = "$c" || test "$d" = "$b" || test "$d" = "$a"); do 
+        d=$(lbrandom3)
+      done
     else
       a=$(lrandom3); b=$(lrandom3); c=$(lrandom3); d=$(lrandom3)
     fi
@@ -104,8 +122,12 @@ do_random_sequence() {
   done
 }
 
-startup
+main() {
+  startup
 
-do_pulse_random
+  do_pulse_random
 
-shutdown
+  shutdown
+}
+
+main &
